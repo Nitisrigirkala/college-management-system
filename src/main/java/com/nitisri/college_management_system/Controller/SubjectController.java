@@ -35,5 +35,14 @@ public class SubjectController {
     public String deleteSubject(@PathVariable Long id){
         subjectService.deleteSubject(id);
         return "Subject Deleted Sucessfully";
+
+        }
+
+    @PutMapping("/{id}")
+    public Subject updateSubject(
+            @PathVariable Long id,
+            @RequestBody Subject subject) {
+
+        return subjectService.updateSubject(id, subject);
     }
 }

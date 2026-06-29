@@ -3,6 +3,7 @@ package com.nitisri.college_management_system.Service;
 
 import com.nitisri.college_management_system.Entity.Student;
 import com.nitisri.college_management_system.Entity.StudentDetails;
+import com.nitisri.college_management_system.Exception.ResourceNotFoundException;
 import com.nitisri.college_management_system.Repository.StudentDetailsRepository;
 import com.nitisri.college_management_system.Repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,9 @@ public class StudentDetailsService {
 
     public StudentDetails saveStudentDetails(StudentDetails studentDetails){
         Long studentId = studentDetails.getStudent().getStudentID();
-        Student student = studentRepository.findById(studentId).get();
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Student not found with id: " + studentId));
         studentDetails.setStudent(student);
         return studentDetailsRepository.save(studentDetails);
 
@@ -31,11 +34,15 @@ public class StudentDetailsService {
     }
 
     public StudentDetails getStudentDetailsByID(Long id){
-        return studentDetailsRepository.findById(id).get();
+        return studentDetailsRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Student Details not found with id: " + id));
     }
 
     public StudentDetails updateStudentDetails(Long id, StudentDetails studentDetails){
-        StudentDetails existingDetails = studentDetailsRepository.findById(id).get();
+        StudentDetails existingDetails = studentDetailsRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Student Details not found with id: " + id));
 
         existingDetails.setPhoneNo(studentDetails.getPhoneNo());
         existingDetails.setStudentAddress(studentDetails.getStudentAddress());
@@ -48,7 +55,11 @@ public class StudentDetailsService {
     }
 
     public void deleteStudentDetails(Long id){
-        studentDetailsRepository.deleteById(id);
+        StudentDetails studentDetails = studentDetailsRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Student Details not found with id: " + id));
+
+        studentDetailsRepository.delete(studentDetails);
     }
 
 }

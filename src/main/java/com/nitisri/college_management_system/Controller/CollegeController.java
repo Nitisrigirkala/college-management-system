@@ -24,6 +24,11 @@ public class CollegeController {
         return collegeService.getAllColleges();
     }
 
+    @GetMapping("/{id}")
+    public College getCollegeById(@PathVariable Long id) {
+        return collegeService.getCollegeById(id);
+    }
+
     @DeleteMapping("/{id}")
     public String deleteCollege(@PathVariable Long id){
         collegeService.deleteCollege(id);

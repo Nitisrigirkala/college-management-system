@@ -1,5 +1,6 @@
 package com.nitisri.college_management_system.Service;
 
+import com.nitisri.college_management_system.DTO.StudentDTO;
 import com.nitisri.college_management_system.Entity.College;
 import com.nitisri.college_management_system.Entity.Student;
 import com.nitisri.college_management_system.Exception.ResourceNotFoundException;
@@ -46,6 +47,24 @@ public class StudentService {
         return studentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Student not found with id: " + id));
     }
+
+    public StudentDTO getStudentDTOById(Long id) {
+
+        Student student = studentRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Student not found with id: " + id));
+
+        StudentDTO dto = new StudentDTO();
+
+        dto.setStudentID(student.getStudentID());
+        dto.setStudentName(student.getStudentName());
+        dto.setEmail(student.getEmail());
+        dto.setCollegeName(student.getCollege().getCollegeName());
+
+        return dto;
+    }
+
+
 
     public Student updateStudent(Long id, Student student){
         Student existingStudent = studentRepository.findById(id)

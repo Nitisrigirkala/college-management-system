@@ -1,6 +1,7 @@
 package com.nitisri.college_management_system.Controller;
 
 
+import com.nitisri.college_management_system.DTO.StudentDTO;
 import com.nitisri.college_management_system.Entity.Student;
 import com.nitisri.college_management_system.Service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,11 @@ public class StudentController {
     @GetMapping("/{id}")
     public Student getStudentById(@PathVariable Long id){
         return studentService.getStudentById(id);
+    }
+
+    @GetMapping("/dto/{id}")
+    public StudentDTO getStudentDTO(@PathVariable Long id) {
+        return studentService.getStudentDTOById(id);
     }
 
     @PutMapping("/{id}")
