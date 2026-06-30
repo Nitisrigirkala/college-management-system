@@ -1,9 +1,11 @@
 package com.nitisri.college_management_system.Controller;
 
 
-import com.nitisri.college_management_system.DTO.StudentDTO;
 import com.nitisri.college_management_system.Entity.Student;
 import com.nitisri.college_management_system.Service.StudentService;
+import com.nitisri.college_management_system.dto.request.CreateStudentRequest;
+import com.nitisri.college_management_system.dto.request.UpdateStudentRequest;
+import com.nitisri.college_management_system.dto.response.StudentResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,12 +19,12 @@ public class StudentController {
     private StudentService studentService;
 
     @PostMapping
-    public Student createStudent(@RequestBody Student student){
-        return studentService.saveStudent(student);
+    public StudentResponse createStudent(@RequestBody CreateStudentRequest request){
+        return studentService.saveStudent(request);
     }
 
     @GetMapping
-    public List<Student> getAllStudents(){
+    public List<StudentResponse> getAllStudents(){
         return studentService.getAllStudents();
     }
 
@@ -33,18 +35,14 @@ public class StudentController {
     }
 
     @GetMapping("/{id}")
-    public Student getStudentById(@PathVariable Long id){
+    public StudentResponse getStudentById(@PathVariable Long id){
         return studentService.getStudentById(id);
     }
 
-    @GetMapping("/dto/{id}")
-    public StudentDTO getStudentDTO(@PathVariable Long id) {
-        return studentService.getStudentDTOById(id);
-    }
-
     @PutMapping("/{id}")
-    public Student updateStudent(@PathVariable Long id,@RequestBody Student student){
-        return studentService.updateStudent(id,student);
+    public StudentResponse updateStudent(@PathVariable Long id,
+                                         @RequestBody UpdateStudentRequest request){
+        return studentService.updateStudent(id, request);
     }
 
 

@@ -2,8 +2,11 @@ package com.nitisri.college_management_system.Controller;
 
 import com.nitisri.college_management_system.Entity.College;
 import com.nitisri.college_management_system.Service.CollegeService;
+import com.nitisri.college_management_system.dto.request.UpdateCollegeRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import com.nitisri.college_management_system.dto.request.CreateCollegeRequest;
+import com.nitisri.college_management_system.dto.response.CollegeResponse;
 
 import java.util.List;
 
@@ -15,17 +18,17 @@ public class CollegeController {
     private CollegeService collegeService;
 
     @PostMapping
-    public College createCollege(@RequestBody College college){
-        return collegeService.saveCollege(college);
+    public CollegeResponse createCollege(@RequestBody CreateCollegeRequest request){
+        return collegeService.saveCollege(request);
     }
 
     @GetMapping
-    public List<College> getAllColleges(){
+    public List<CollegeResponse> getAllColleges(){
         return collegeService.getAllColleges();
     }
 
     @GetMapping("/{id}")
-    public College getCollegeById(@PathVariable Long id) {
+    public CollegeResponse getCollegeById(@PathVariable Long id) {
         return collegeService.getCollegeById(id);
     }
 
@@ -36,8 +39,9 @@ public class CollegeController {
     }
 
     @PutMapping("/{id}")
-    public College updateCollege(@PathVariable Long id,@RequestBody College college){
-        return collegeService.updateCollege(id, college);
+    public CollegeResponse updateCollege(@PathVariable Long id,
+                                         @RequestBody UpdateCollegeRequest request){
+        return collegeService.updateCollege(id, request);
     }
 
 }

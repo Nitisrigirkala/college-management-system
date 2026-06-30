@@ -1,14 +1,17 @@
 package com.nitisri.college_management_system.Service;
 
-import com.nitisri.college_management_system.DTO.StudentDTO;
 import com.nitisri.college_management_system.Entity.College;
 import com.nitisri.college_management_system.Entity.Student;
 import com.nitisri.college_management_system.Exception.ResourceNotFoundException;
 import com.nitisri.college_management_system.Repository.CollegeRepository;
 import com.nitisri.college_management_system.Repository.StudentRepository;
+import com.nitisri.college_management_system.dto.request.CreateStudentRequest;
+import com.nitisri.college_management_system.dto.request.UpdateStudentRequest;
+import com.nitisri.college_management_system.dto.response.StudentResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -20,19 +23,36 @@ public class StudentService {
     @Autowired
     public CollegeRepository collegeRepository;
 
-    public Student saveStudent(Student student) {
-        Long collegeId = student.getCollege().getCollegeId();
+    public StudentResponse saveStudent(CreateStudentRequest request) {
+        Long collegeId = request.getCollegeId();
 
         College college = collegeRepository.findById(collegeId)
                 .orElseThrow(() -> new ResourceNotFoundException("College not found with id: " + collegeId));
 
+        Student student = new Student();
+
+        student.setStudentName(request.getStudentName());
+        student.setEmail(request.getEmail());
         student.setCollege(college);
-        return studentRepository.save(student);
+
+        Student savedStudent = studentRepository.save(student);
+
+        return mapToStudentResponse(savedStudent);
 
     }
 
-    public List<Student> getAllStudents() {
-        return studentRepository.findAll();
+    public List<StudentResponse> getAllStudents() {
+
+        List<Student> students = studentRepository.findAll();
+
+        List<StudentResponse> responseList = new ArrayList<>();
+
+        for (Student student : students) {
+            responseList.add(mapToStudentResponse(student));
+        }
+
+        return responseList;
+
     }
 
     public void deleteStudent(Long id){
@@ -43,35 +63,42 @@ public class StudentService {
         studentRepository.delete(student);
     }
 
-    public Student getStudentById(Long id){
-        return studentRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Student not found with id: " + id));
-    }
-
-    public StudentDTO getStudentDTOById(Long id) {
+    public StudentResponse getStudentById(Long id) {
 
         Student student = studentRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Student not found with id: " + id));
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Student not found with id: " + id));
 
-        StudentDTO dto = new StudentDTO();
-
-        dto.setStudentID(student.getStudentID());
-        dto.setStudentName(student.getStudentName());
-        dto.setEmail(student.getEmail());
-        dto.setCollegeName(student.getCollege().getCollegeName());
-
-        return dto;
+        return mapToStudentResponse(student);
     }
 
 
 
-    public Student updateStudent(Long id, Student student){
+    public StudentResponse updateStudent(Long id, UpdateStudentRequest request) {
+
         Student existingStudent = studentRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Student not found with id: " + id));
-        existingStudent.setStudentName(student.getStudentName());
-        existingStudent.setEmail(student.getEmail());
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Student not found with id: " + id));
 
-        return studentRepository.save(existingStudent);
+        existingStudent.setStudentName(request.getStudentName());
+        existingStudent.setEmail(request.getEmail());
+
+        Student updatedStudent = studentRepository.save(existingStudent);
+
+        return mapToStudentResponse(updatedStudent);
     }
+
+    // Helper method to convert Student Entity to StudentResponse DTO
+    private StudentResponse mapToStudentResponse(Student student) {
+
+        StudentResponse response = new StudentResponse();
+
+        response.setStudentID(student.getStudentID());
+        response.setStudentName(student.getStudentName());
+        response.setEmail(student.getEmail());
+        response.setCollegeName(student.getCollege().getCollegeName());
+
+        return response;
+    }
+
 }
